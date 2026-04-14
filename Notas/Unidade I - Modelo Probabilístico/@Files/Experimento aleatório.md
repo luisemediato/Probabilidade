@@ -1,0 +1,1 @@
+É um experimento que pode fornecer diferentes resultados, mesmo sendo repetido toda vez da mesma maneira, ele tem uma [Componente Aleatória](Componente%20Aleatória.md).

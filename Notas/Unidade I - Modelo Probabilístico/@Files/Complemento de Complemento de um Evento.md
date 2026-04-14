@@ -1,0 +1,1 @@
+Seja $E$  um [Evento](Evento.md), então:  $(E')' = E$ 

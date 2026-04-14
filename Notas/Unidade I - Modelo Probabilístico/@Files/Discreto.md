@@ -1,0 +1,1 @@
+Consiste em um conjunto finito ou infinito contável de resultados.

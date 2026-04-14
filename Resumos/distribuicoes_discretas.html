@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distribuições Discretas de Probabilidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --bg2: #161511;
+    --bg3: #1e1c17;
+    --bg4: #252319;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8e4d9;
+    --text2: #9d9882;
+    --text3: #6b6654;
+    --gold: #c9a84c;
+    --gold2: #e8c96a;
+    --gold-dim: rgba(201,168,76,0.12);
+    --gold-dim2: rgba(201,168,76,0.22);
+    --accent: #7c6f4a;
+    --warn: #d4845a;
+    --warn-bg: rgba(212,132,90,0.1);
+    --info: #5a9fd4;
+    --info-bg: rgba(90,159,212,0.1);
+    --success: #6db87a;
+    --success-bg: rgba(109,184,122,0.1);
+    --serif: 'Crimson Pro', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── LAYOUT ── */
+  .app { display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--bg2);
+    border-right: 0.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+  }
+  .sidebar-header {
+    padding: 24px 20px 18px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .sidebar-title {
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .sidebar-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 3px;
+    font-family: var(--mono);
+  }
+  .sidebar-nav { padding: 12px 0; flex: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active {
+    background: var(--gold-dim);
+    color: var(--gold2);
+    border-left-color: var(--gold);
+  }
+  .nav-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    min-width: 16px;
+  }
+  .nav-item.active .nav-num { color: var(--gold); }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    overflow-x: hidden;
+    min-width: 0;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--bg2);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 14px 16px;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--gold2);
+    border-bottom-color: var(--gold);
+  }
+
+  /* CONTENT AREA */
+  .content { padding: 40px; max-width: 860px; }
+
+  /* DIST HEADER */
+  .dist-hero {
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .dist-hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .dist-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--gold-dim);
+    border: 0.5px solid rgba(201,168,76,0.3);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  .dist-name {
+    font-family: var(--serif);
+    font-size: 38px;
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .dist-name em { color: var(--gold2); font-style: italic; }
+  .dist-tagline {
+    font-size: 14px;
+    color: var(--text2);
+    max-width: 500px;
+    line-height: 1.55;
+  }
+  .dist-params-badge {
+    background: var(--bg3);
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    min-width: 160px;
+    flex-shrink: 0;
+  }
+  .dist-params-badge .pb-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+  .pb-param { color: var(--gold2); line-height: 1.8; }
+  .pb-param span { color: var(--text2); }
+
+  /* SECTION */
+  .section { margin-bottom: 40px; }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+  }
+
+  /* STORY */
+  .story-card {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 26px;
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: #d4cfc0;
+  }
+  .story-card p { margin-bottom: 14px; }
+  .story-card p:last-child { margin-bottom: 0; }
+  .story-card strong { color: var(--gold2); font-weight: 600; }
+  .story-card em { color: var(--text2); font-style: italic; }
+
+  .example-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .chip {
+    background: var(--bg4);
+    border: 0.5px solid var(--border2);
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-size: 12px;
+    color: var(--text2);
+    font-family: var(--sans);
+  }
+  .chip::before { content: '↳ '; color: var(--text3); }
+
+  /* FORMULA BOX */
+  .formula-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .fbox {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .fbox.highlight {
+    border-color: rgba(201,168,76,0.35);
+    background: var(--gold-dim);
+  }
+  .fbox-label {
+    font-size: 10px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+  .fbox-formula {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--gold2);
+    line-height: 1.6;
+  }
+  .fbox-note {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* DERIVATION */
+  .deriv {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .deriv-step {
+    padding: 16px 22px;
+    border-bottom: 0.5px solid var(--border);
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .deriv-step:last-child { border-bottom: none; }
+  .deriv-step.result-step {
+    background: var(--gold-dim);
+    border-color: rgba(201,168,76,0.2);
+  }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    padding-top: 2px;
+  }
+  .deriv-step.result-step .step-num { color: var(--gold); }
+  .step-content {}
+  .step-math {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--gold2);
+    margin-bottom: 5px;
+    line-height: 1.7;
+  }
+  .step-explain {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  .step-explain strong { color: var(--text); font-weight: 500; }
+
+  /* CHART */
+  .chart-wrap {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .chart-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 0.5px solid var(--border);
+    align-items: flex-end;
+  }
+  .ctrl {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 130px;
+    flex: 1;
+  }
+  .ctrl-label {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text3);
+    display: flex;
+    justify-content: space-between;
+  }
+  .ctrl-label b { color: var(--gold2); font-weight: 500; }
+  input[type=range] {
+    width: 100%;
+    accent-color: var(--gold);
+    cursor: pointer;
+  }
+  .chart-stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .cstat {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .cstat b { color: var(--gold2); font-weight: 500; }
+
+  /* PROPS */
+  .prop-list { display: flex; flex-direction: column; gap: 10px; }
+  .prop-item {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 13px 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text2);
+  }
+  .prop-item strong { color: var(--text); font-weight: 500; }
+  .prop-item code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gold2);
+    background: var(--gold-dim);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* COMPARE */
+  .compare-block {
+    background: var(--warn-bg);
+    border: 0.5px solid rgba(212,132,90,0.25);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+  }
+  .compare-block + .compare-block { margin-top: 10px; }
+  .compare-title {
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--warn);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .compare-body {
+    font-size: 13.5px;
+    color: #c8ae92;
+    line-height: 1.65;
+  }
+  .compare-body strong { color: var(--text); font-weight: 500; }
+
+  .info-block {
+    background: var(--info-bg);
+    border: 0.5px solid rgba(90,159,212,0.25);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #92bdd8;
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+  .info-block strong { color: var(--info); }
+
+  .success-block {
+    background: var(--success-bg);
+    border: 0.5px solid rgba(109,184,122,0.25);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #8ecb98;
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+  .success-block strong { color: var(--success); }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 0.5px solid var(--border2);
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 0.5px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  td:first-child { color: var(--gold2); font-family: var(--mono); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+
+  /* HIDDEN */
+  .dist-section { display: none; }
+  .dist-section.visible { display: block; }
+  .tab-panel { display: none; }
+  .tab-panel.visible { display: block; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+    .content { padding: 20px; }
+    .topbar { padding: 0 16px; }
+    .dist-name { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Distribuições</div>
+      <div class="sidebar-sub">Discretas · Probabilidade</div>
+    </div>
+    <nav class="sidebar-nav" id="sideNav"></nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="content" id="mainContent"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// MATH HELPERS
+// ══════════════════════════════════════════════
+function binom(n, k) {
+  if (k < 0 || k > n) return 0;
+  if (k === 0 || k === n) return 1;
+  let r = 1;
+  for (let i = 0; i < k; i++) r = r * (n - i) / (i + 1);
+  return r;
+}
+function fact(n) { let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; }
+function pmf(id, p, n, r, N, K, lam, k) {
+  const q = 1 - p;
+  if (id === 'uniforme') return (k >= 1 && k <= n) ? 1 / n : 0;
+  if (id === 'bernoulli') return k === 0 ? q : k === 1 ? p : 0;
+  if (id === 'binomial') return binom(n, k) * Math.pow(p, k) * Math.pow(q, n - k);
+  if (id === 'geometrica') return k >= 1 ? Math.pow(q, k - 1) * p : 0;
+  if (id === 'negbin') return k >= r ? binom(k - 1, r - 1) * Math.pow(p, r) * Math.pow(q, k - r) : 0;
+  if (id === 'hiper') {
+    if (k < Math.max(0, n - (N - K)) || k > Math.min(n, K)) return 0;
+    return binom(K, k) * binom(N - K, n - k) / binom(N, n);
+  }
+  if (id === 'poisson') return k >= 0 ? Math.exp(-lam) * Math.pow(lam, k) / fact(k) : 0;
+  return 0;
+}
+function getRange(id, p, n, r, N, K, lam) {
+  if (id === 'uniforme') return Array.from({ length: n }, (_, i) => i + 1);
+  if (id === 'bernoulli') return [0, 1];
+  if (id === 'binomial') return Array.from({ length: n + 1 }, (_, i) => i);
+  if (id === 'geometrica') return Array.from({ length: Math.min(Math.ceil(10 / p), 30) }, (_, i) => i + 1);
+  if (id === 'negbin') return Array.from({ length: Math.min(r + Math.ceil(12 * (1 - p) / p), 45) - r + 1 }, (_, i) => i + r);
+  if (id === 'hiper') { let lo = Math.max(0, n - (N - K)), hi = Math.min(n, K); return Array.from({ length: hi - lo + 1 }, (_, i) => lo + i); }
+  if (id === 'poisson') return Array.from({ length: Math.min(Math.ceil(lam + 4 * Math.sqrt(lam) + 3), 45) + 1 }, (_, i) => i);
+  return [];
+}
+
+// ══════════════════════════════════════════════
+// DISTRIBUTION DATA
+// ══════════════════════════════════════════════
+const DISTS = [
+  {
+    id: 'uniforme', num: '01',
+    name: 'Uniforme', nameItalic: 'Discreta',
+    tagline: 'Todos os resultados são igualmente prováveis — a distribuição da total ignorância.',
+    params: { n: 6 },
+    paramsBadge: [['n', 'número de resultados', '≥ 2']],
+    color: '#9d9882',
+
+    story: `
+      <p>Imagine um dado comum de seis faces. Você o lança e pergunta: qual é a probabilidade de sair o número 3? A resposta intuitiva é <strong>1/6</strong>, e para qualquer outro número também é 1/6. Nenhuma face é privilegiada — há uma simetria perfeita de chances.</p>
+      <p>Essa intuição, formalizada, é a <strong>Distribuição Uniforme Discreta</strong>. Ela surge sempre que um experimento tem um número finito de resultados e não existe razão alguma — física, lógica ou empírica — para favorecer um em detrimento de outro. É a distribuição da <em>máxima ignorância estruturada</em>: sabemos que algo acontecerá, mas não temos informação para discriminar entre as possibilidades.</p>
+      <p>Em teoria da probabilidade, ela é o <strong>ponto de partida conceitual</strong>: antes de qualquer dado ou assimetria, a hipótese default é a uniformidade.</p>
+    `,
+    examples: ['Dado honesto de n faces', 'Sorteio de loteria', 'Geração de número aleatório inteiro', 'Roleta sem tendência'],
+
+    formulas: `
+      <div class="formula-grid">
+        <div class="fbox highlight">
+          <div class="fbox-label">FMP — P(X = k)</div>
+          <div class="fbox-formula">P(X = k) = 1/n</div>
+          <div class="fbox-note">para k = 1, 2, …, n</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">FDA — F(k) = P(X ≤ k)</div>
+          <div class="fbox-formula">F(k) = ⌊k⌋ / n</div>
+          <div class="fbox-note">para 1 ≤ k ≤ n; F(k) = 0 se k &lt; 1; F(k) = 1 se k > n</div>
+        </div>
+      </div>
+      <div class="formula-grid">
+        <div class="fbox">
+          <div class="fbox-label">Suporte</div>
+          <div class="fbox-formula">X ∈ {1, 2, …, n}</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Esperança E[X]</div>
+          <div class="fbox-formula">(n + 1) / 2</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Variância Var(X)</div>
+          <div class="fbox-formula">(n² − 1) / 12</div>
+        </div>
+      </div>
+    `,
+
+    esperanca: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = Σ_{k=1}^{n} k · P(X = k)</div>
+            <div class="step-explain">Definição de esperança: soma de cada valor pelo seu peso (probabilidade).</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">= Σ_{k=1}^{n} k · (1/n)</div>
+            <div class="step-explain">Substituímos P(X = k) = 1/n, pois cada valor tem mesma probabilidade.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">= (1/n) · Σ_{k=1}^{n} k</div>
+            <div class="step-explain">O fator 1/n é constante, sai da soma.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">= (1/n) · [n(n+1)/2]</div>
+            <div class="step-explain"><strong>Gauss:</strong> a soma 1 + 2 + … + n = n(n+1)/2.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = (n + 1) / 2</div>
+            <div class="step-explain">Simplificando n/n = 1. Intuitivo: é exatamente o valor médio do intervalo {1, …, n}.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    variancia: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = E[X²] − (E[X])²</div>
+            <div class="step-explain"><strong>Fórmula de König-Huygens.</strong> Usaremos esta identidade para simplificar os cálculos.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">E[X²] = Σ_{k=1}^{n} k² · (1/n) = (1/n) · Σ_{k=1}^{n} k²</div>
+            <div class="step-explain">Calculamos E[X²] usando P(X=k) = 1/n.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">Σ_{k=1}^{n} k² = n(n+1)(2n+1) / 6</div>
+            <div class="step-explain"><strong>Identidade clássica</strong> para a soma dos quadrados dos n primeiros inteiros.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">E[X²] = (n+1)(2n+1) / 6</div>
+            <div class="step-explain">Dividindo n(n+1)(2n+1)/6 por n.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = (n+1)(2n+1)/6 − [(n+1)/2]²</div>
+            <div class="step-explain">Substituindo E[X] = (n+1)/2 e E[X²] obtido acima.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <div class="step-math">= (n+1)[(2n+1)/6 − (n+1)/4]</div>
+            <div class="step-explain">Fatoramos (n+1) em evidência.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">7</div>
+          <div class="step-content">
+            <div class="step-math">= (n+1) · [2(2n+1) − 3(n+1)] / 12</div>
+            <div class="step-explain">MMC de 6 e 4 é 12. Colocamos sobre denominador comum.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">8</div>
+          <div class="step-content">
+            <div class="step-math">= (n+1) · (4n+2 − 3n−3) / 12 = (n+1)(n−1) / 12</div>
+            <div class="step-explain">Expandindo: 4n+2−3n−3 = n−1.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = (n² − 1) / 12</div>
+            <div class="step-explain">Usando (n+1)(n−1) = n²−1. Cresce com n²: intervalos maiores têm dispersão quadrática.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    props: `
+      <div class="prop-list">
+        <div class="prop-item"><strong>Máxima entropia:</strong> para uma v.a. discreta com suporte fixo {1,…,n}, a Uniforme maximiza a entropia de Shannon H = −Σ p log p. É a distribuição que "menos assume" sobre os dados.</div>
+        <div class="prop-item"><strong>Simetria:</strong> a distribuição é simétrica em torno da média (n+1)/2, portanto a assimetria (skewness) é zero e a mediana coincide com a média.</div>
+        <div class="prop-item"><strong>FDA linear:</strong> F(k) = k/n cresce linearmente — cada valor adicional incrementa a probabilidade acumulada em 1/n.</div>
+        <div class="prop-item"><strong>Caso limite:</strong> quando n → ∞, com reescalonamento adequado, converge para a Uniforme Contínua em [0,1].</div>
+      </div>
+    `,
+
+    compare: `
+      <div class="compare-block">
+        <div class="compare-title">⚡ Uniforme vs. Outras distribuições</div>
+        <div class="compare-body">A Uniforme é o <strong>ponto de referência</strong>: quando você observa que as probabilidades <em>não</em> são iguais, você abandona a Uniforme e adota um modelo que captura a assimetria. Bernoulli, Binomial, Poisson etc. surgem exatamente como respostas a essa assimetria. Portanto, questionar se um modelo é adequado frequentemente significa testar se os dados são consistentes com a Uniforme ou se há desvio sistemático.</div>
+      </div>
+    `,
+
+    chartConfig: (p) => {
+      const n = p.n;
+      const ids = ['u-n'];
+      return { n, lam: 1, r: 1, N: 20, K: 8, _p: 0.5, ids };
+    }
+  },
+
+  // ── BERNOULLI ──
+  {
+    id: 'bernoulli', num: '02',
+    name: 'Bernoulli', nameItalic: '',
+    tagline: 'O átomo das distribuições discretas: um único experimento, dois desfechos.',
+    params: { p: 0.4 },
+    paramsBadge: [['p', 'probabilidade de sucesso', '0 < p < 1']],
+    color: '#7c6f8e',
+
+    story: `
+      <p><strong>Jakob Bernoulli</strong> (1654–1705), matemático suíço, estava interessado em jogos de azar e seguros marítimos. Ele percebeu que inúmeros fenômenos podiam ser reduzidos a um experimento elementar: algo acontece ou não acontece. Um navio afunda ou chega ao porto. Um dado mostra um seis ou não. Um produto está defeituoso ou está íntegro.</p>
+      <p>Esse experimento binário recebeu seu nome: o <strong>Ensaio de Bernoulli</strong>. A variável aleatória associada, X, assume apenas dois valores: <strong>1</strong> (sucesso, com probabilidade p) e <strong>0</strong> (fracasso, com probabilidade 1−p). Simples, porém extraordinariamente poderoso: é o tijolo com o qual todas as distribuições contagem são construídas.</p>
+      <p>A notação X ~ <em>Bernoulli(p)</em> indica que X captura o resultado de um único ensaio.</p>
+    `,
+    examples: ['Lançamento de moeda (cara/coroa)', 'Peça defeituosa (sim/não)', 'Cliente converte (clica/não clica)', 'Paciente responde ao tratamento'],
+
+    formulas: `
+      <div class="formula-grid">
+        <div class="fbox highlight">
+          <div class="fbox-label">FMP — P(X = k)</div>
+          <div class="fbox-formula">P(X = k) = pᵏ (1−p)^(1−k)</div>
+          <div class="fbox-note">k ∈ {0, 1}; P(X=1)=p, P(X=0)=1−p</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">FDA — F(k)</div>
+          <div class="fbox-formula">F(k) = 0,     k &lt; 0
+F(k) = 1−p,  0 ≤ k &lt; 1
+F(k) = 1,    k ≥ 1</div>
+        </div>
+      </div>
+      <div class="formula-grid">
+        <div class="fbox">
+          <div class="fbox-label">Esperança E[X]</div>
+          <div class="fbox-formula">p</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Variância Var(X)</div>
+          <div class="fbox-formula">p(1−p) = pq</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Função Geradora de Momentos</div>
+          <div class="fbox-formula">M(t) = q + pe^t</div>
+        </div>
+      </div>
+    `,
+
+    esperanca: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = Σ_{k} k · P(X = k)</div>
+            <div class="step-explain">Definição de esperança. O suporte é {0, 1}, então a soma tem apenas dois termos.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">= 0 · P(X=0) + 1 · P(X=1)</div>
+            <div class="step-explain">Enumeramos os dois casos: k=0 e k=1.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">= 0 · (1−p) + 1 · p</div>
+            <div class="step-explain">Substituímos as probabilidades: P(X=0) = 1−p, P(X=1) = p.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = p</div>
+            <div class="step-explain">O primeiro termo é zero; o segundo é p. Intuitivo: se lançarmos a moeda muitas vezes, a fração de caras converge para p.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    variancia: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = E[X²] − (E[X])²</div>
+            <div class="step-explain">Identidade de König-Huygens. Primeiro calculamos E[X²].</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">E[X²] = 0² · (1−p) + 1² · p = p</div>
+            <div class="step-explain">Como X ∈ {0,1}, temos X² = X (propriedade de variáveis indicadoras: 0²=0, 1²=1). Portanto E[X²] = E[X] = p.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = p − p²</div>
+            <div class="step-explain">Substituindo E[X²] = p e (E[X])² = p².</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = p(1 − p) = pq</div>
+            <div class="step-explain">Fatorando p. Máximo em p=0.5 (Var = 0.25), onde a incerteza é máxima. Vai a zero quando p→0 ou p→1 (desfecho certo).</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    props: `
+      <div class="prop-list">
+        <div class="prop-item"><strong>Variável indicadora:</strong> X ~ Bernoulli(p) é a variável indicadora do evento A = "sucesso". Para qualquer evento, 1_A ~ Bernoulli(P(A)).</div>
+        <div class="prop-item"><strong>Caso especial da Binomial:</strong> <code>Bernoulli(p) = Binomial(n=1, p)</code>. Toda a teoria da Binomial se reduz à Bernoulli quando n=1.</div>
+        <div class="prop-item"><strong>Variância máxima em p=0.5:</strong> Var(X) = p(1−p) é uma parábola com máximo 0.25. Quando p=0.5, há máxima incerteza sobre o desfecho.</div>
+        <div class="prop-item"><strong>Idempotência:</strong> como X ∈ {0,1}, vale X² = X, X³ = X, etc. Todos os momentos de ordem k são iguais a p.</div>
+      </div>
+    `,
+
+    compare: `
+      <div class="compare-block">
+        <div class="compare-title">⚡ Bernoulli vs. Binomial</div>
+        <div class="compare-body"><strong>Bernoulli</strong> = uma única tentativa. <strong>Binomial</strong> = n tentativas. Se você repetir o ensaio n vezes de forma independente e contar os sucessos, você tem uma Binomial(n, p). A Bernoulli é literalmente o bloco de construção da Binomial.</div>
+      </div>
+    `
+  },
+
+  // ── BINOMIAL ──
+  {
+    id: 'binomial', num: '03',
+    name: 'Binomial', nameItalic: '',
+    tagline: 'Empilhe n ensaios de Bernoulli independentes e conte os sucessos.',
+    params: { p: 0.4, n: 15 },
+    paramsBadge: [['n', 'número de tentativas', '≥ 1'], ['p', 'probabilidade de sucesso', '0 < p < 1']],
+    color: '#4a7fa5',
+
+    story: `
+      <p>Você lança uma moeda 10 vezes. Qual a probabilidade de exatamente 6 caras? Esse é o problema que motivou a Distribuição Binomial, que apareceu formalmente nos trabalhos de <strong>Jakob Bernoulli</strong> (Ars Conjectandi, 1713, publicado postumamente) e <strong>Abraham de Moivre</strong>.</p>
+      <p>A ideia é direta: se cada ensaio de Bernoulli é independente dos demais e todos têm a mesma probabilidade p de sucesso, então ao repetirmos n vezes e contar os sucessos, temos X ~ <strong>Binomial(n, p)</strong>.</p>
+      <p>O coeficiente binomial C(n, k) — daí o nome — conta o número de sequências distintas com exatamente k sucessos em n posições. Multiplicado por p^k · (1-p)^(n-k), que é a probabilidade de qualquer sequência específica com k sucessos, dá a FMP.</p>
+      <p>É onipresente: controle de qualidade, epidemiologia, análise A/B, genética (lei de Mendel), finanças.</p>
+    `,
+    examples: ['Nº de defeitos em lote de n peças', 'Nº de acertos em prova de múltipla escolha', 'Nº de genes dominantes em descendentes', 'Conversões em n cliques de anúncio'],
+
+    formulas: `
+      <div class="formula-grid">
+        <div class="fbox highlight">
+          <div class="fbox-label">FMP — P(X = k)</div>
+          <div class="fbox-formula">P(X = k) = C(n,k) · pᵏ · (1−p)^(n−k)</div>
+          <div class="fbox-note">k = 0, 1, …, n</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">FDA — F(k) = P(X ≤ k)</div>
+          <div class="fbox-formula">F(k) = Σ_{j=0}^{k} C(n,j)·pʲ·(1−p)^(n−j)</div>
+          <div class="fbox-note">Sem forma fechada simples; usa-se tabela ou softw.</div>
+        </div>
+      </div>
+      <div class="formula-grid">
+        <div class="fbox">
+          <div class="fbox-label">Esperança E[X]</div>
+          <div class="fbox-formula">np</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Variância Var(X)</div>
+          <div class="fbox-formula">np(1−p) = npq</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">FGM M(t)</div>
+          <div class="fbox-formula">(q + pe^t)^n</div>
+        </div>
+      </div>
+    `,
+
+    esperanca: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = Σ_{k=0}^{n} k · C(n,k) · pᵏ · qⁿ⁻ᵏ</div>
+            <div class="step-explain">Definição. O termo k=0 contribui zero, então a soma começa em k=1.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">k · C(n,k) = k · n!/(k!(n−k)!) = n · (n−1)!/((k−1)!(n−k)!) = n · C(n−1, k−1)</div>
+            <div class="step-explain"><strong>Identidade combinatória fundamental:</strong> k·C(n,k) = n·C(n−1,k−1). Cancelamos um k com k! e um n com n.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = np · Σ_{k=1}^{n} C(n−1, k−1) · pᵏ⁻¹ · qⁿ⁻ᵏ</div>
+            <div class="step-explain">Fatoramos np. Substituímos j = k−1, então k−1 varia de 0 a n−1.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">= np · Σ_{j=0}^{n−1} C(n−1, j) · pʲ · qⁿ⁻¹⁻ʲ</div>
+            <div class="step-explain">A soma é o teorema binomial: Σ C(n−1,j)·pʲ·qⁿ⁻¹⁻ʲ = (p+q)ⁿ⁻¹ = 1.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = np · 1 = np</div>
+            <div class="step-explain">Resultado intuitivo: esperamos uma fração p de sucessos em n tentativas. <br><em>Alternativa elegante via linearidade:</em> X = X₁+…+Xₙ onde Xᵢ~Bernoulli(p), então E[X]=nE[X₁]=np.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    variancia: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">X = X₁ + X₂ + … + Xₙ,  Xᵢ ~ Bernoulli(p) i.i.d.</div>
+            <div class="step-explain"><strong>Representação como soma:</strong> escrevemos X como soma de n variáveis indicadoras independentes e identicamente distribuídas.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = Var(X₁ + … + Xₙ)</div>
+            <div class="step-explain">Aplicamos a definição de variância à soma.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">= Var(X₁) + Var(X₂) + … + Var(Xₙ)</div>
+            <div class="step-explain"><strong>Propriedade fundamental:</strong> Var(A+B) = Var(A) + Var(B) quando A e B são <strong>independentes</strong>. Os n ensaios são i.i.d., logo esta decomposição vale.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">= n · Var(X₁) = n · p(1−p)</div>
+            <div class="step-explain">Cada Xᵢ tem variância p(1−p) (resultado da Bernoulli). Como há n parcelas iguais, somamos n vezes.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = np(1−p) = npq</div>
+            <div class="step-explain">Máxima quando p = 0.5. A independência entre tentativas é crucial: sem ela, não poderíamos somar as variâncias — esse é o ponto de distinção com a Hipergeométrica.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    props: `
+      <div class="prop-list">
+        <div class="prop-item"><strong>Fechamento por adição:</strong> Se X~Bin(n₁,p) e Y~Bin(n₂,p) independentes, então <code>X+Y ~ Bin(n₁+n₂, p)</code>. A taxa p deve ser a mesma.</div>
+        <div class="prop-item"><strong>Simetria:</strong> Se X~Bin(n,p), então Y = n−X ~ Bin(n, 1−p). Trocar sucesso/fracasso reflete a distribuição.</div>
+        <div class="prop-item"><strong>Moda:</strong> localizada em ⌊(n+1)p⌋ ou ⌊(n+1)p⌋ − 1 (quando (n+1)p é inteiro, há duas modas).</div>
+        <div class="prop-item"><strong>Aproximação pela Normal (TLC):</strong> Para n grande e p não extremo, <code>Bin(n,p) ≈ Normal(np, npq)</code>. Regra prática: np > 5 e nq > 5.</div>
+        <div class="prop-item"><strong>Aproximação por Poisson:</strong> Para n grande, p pequeno, np = λ moderado, <code>Bin(n,p) ≈ Poisson(λ)</code>. Regra prática: n ≥ 30, p ≤ 0.05.</div>
+      </div>
+    `,
+
+    compare: `
+      <div class="compare-block">
+        <div class="compare-title">⚡ Binomial vs. Hipergeométrica</div>
+        <div class="compare-body">A diferença essencial é a <strong>reposição</strong>. Binomial: cada tentativa é independente (com reposição ou população infinita). Hipergeométrica: sorteio sem reposição de população finita. Para N muito grande (N ≫ n), as duas convergem, pois retirar sem reposição de uma urna enorme é quase como retirar com reposição.</div>
+      </div>
+      <div class="compare-block">
+        <div class="compare-title">⚡ Binomial vs. Poisson</div>
+        <div class="compare-body">Binomial tem <strong>n fixo e conhecido</strong>. Poisson é o limite quando n→∞ e p→0 mantendo np=λ constante: regime de eventos raros em quantidade grande de tentativas. Se você sabe o n, use Binomial; se n é enorme e p minúsculo, Poisson é mais tratável.</div>
+      </div>
+    `
+  },
+
+  // ── GEOMÉTRICA ──
+  {
+    id: 'geometrica', num: '04',
+    name: 'Geométrica', nameItalic: '',
+    tagline: 'Quantas tentativas até o primeiro sucesso? A distribuição da espera.',
+    params: { p: 0.3 },
+    paramsBadge: [['p', 'probabilidade de sucesso', '0 < p ≤ 1']],
+    color: '#3a8a67',
+
+    story: `
+      <p>Você está tentando conseguir um emprego. A cada entrevista, tem probabilidade p de ser aprovado. Se não for aprovado, tenta novamente na próxima semana. <strong>Quantas entrevistas você fará até conseguir o emprego?</strong></p>
+      <p>Essa é a pergunta da <strong>Distribuição Geométrica</strong>. Ao contrário da Binomial, que fixa n e conta os sucessos, aqui o número de tentativas é a variável aleatória. O processo só para quando ocorre o primeiro sucesso.</p>
+      <p>Ela emerge naturalmente sempre que há um processo de repetição sem memória: tentativas de reconexão em redes, tempo até falha de um componente (em versão discreta), número de amostras até encontrar o primeiro item defeituoso.</p>
+      <p>A derivação da FMP é simples: para X = k, precisamos de exatamente (k−1) fracassos seguidos de 1 sucesso. Como os ensaios são independentes, multiplicamos as probabilidades: (1−p)^(k−1) · p.</p>
+    `,
+    examples: ['Tentativas até primeira venda', 'Lançamentos até sair face 6', 'Pacotes até primeiro erro de transmissão', 'Itens inspecionados até 1º defeito'],
+
+    formulas: `
+      <div class="formula-grid">
+        <div class="fbox highlight">
+          <div class="fbox-label">FMP — P(X = k)</div>
+          <div class="fbox-formula">P(X = k) = (1−p)^(k−1) · p</div>
+          <div class="fbox-note">k = 1, 2, 3, … (nº da tentativa do 1º sucesso)</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">FDA — F(k) = P(X ≤ k)</div>
+          <div class="fbox-formula">F(k) = 1 − (1−p)^k</div>
+          <div class="fbox-note">Prob. de sucesso ocorrer nas primeiras k tentativas.</div>
+        </div>
+      </div>
+      <div class="formula-grid">
+        <div class="fbox">
+          <div class="fbox-label">Esperança E[X]</div>
+          <div class="fbox-formula">1/p</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Variância Var(X)</div>
+          <div class="fbox-formula">(1−p)/p²</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">FGM M(t)</div>
+          <div class="fbox-formula">pe^t / [1 − (1−p)e^t]</div>
+        </div>
+      </div>
+    `,
+
+    esperanca: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = Σ_{k=1}^{∞} k · (1−p)^(k−1) · p</div>
+            <div class="step-explain">Definição. Soma infinita pois k pode ser qualquer inteiro positivo. Vamos usar diferenciação de série de potências.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">Seja q = 1−p. Então: E[X] = p · Σ_{k=1}^{∞} k · qᵏ⁻¹</div>
+            <div class="step-explain">Substituição de notação. Agora usamos o truque de derivação: d/dq[qᵏ] = k·qᵏ⁻¹.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">Σ_{k=1}^{∞} qᵏ = q/(1−q) = q/p  (série geométrica, |q| &lt; 1)</div>
+            <div class="step-explain">Lembramos que Σ_{k=0}^∞ qᵏ = 1/(1−q), portanto Σ_{k=1}^∞ qᵏ = q/(1−q).</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">d/dq [q/(1−q)] = 1/(1−q)² = 1/p²</div>
+            <div class="step-explain">Derivamos ambos os lados em q. A derivada de Σ qᵏ é Σ k·qᵏ⁻¹ (troca de soma e derivação, válida para séries de potências).</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-math">Portanto: Σ_{k=1}^{∞} k·qᵏ⁻¹ = 1/p²</div>
+            <div class="step-explain">A derivada de Σ qᵏ = q/p em relação a q dá exatamente a soma que precisamos.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = p · (1/p²) = 1/p</div>
+            <div class="step-explain">Se p=0.5 (moeda), espera-se 2 tentativas. Se p=0.1 (evento raro), espera-se 10 tentativas. Inversamente proporcional a p.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    variancia: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = E[X²] − (E[X])² = E[X²] − 1/p²</div>
+            <div class="step-explain">König-Huygens. Precisamos calcular E[X²] = Σ k²·(1-p)^(k-1)·p.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">Usamos: E[X(X−1)] = Σ_{k=1}^∞ k(k−1)·qᵏ⁻¹·p</div>
+            <div class="step-explain"><strong>Fatorial descendente:</strong> é mais fácil calcular E[X(X-1)] = E[X²] - E[X] e depois isolar E[X²].</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">Σ_{k=2}^∞ k(k−1)·qᵏ⁻² = d²/dq²[1/(1−q)] = 2/(1−q)³ = 2/p³</div>
+            <div class="step-explain">Segunda derivada de Σ qᵏ = 1/(1-q). A soma de k(k-1)qᵏ⁻² é a segunda derivada da série geométrica.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">E[X(X−1)] = p·q · Σ k(k−1)·qᵏ⁻² = p·q · 2/p³ = 2q/p²</div>
+            <div class="step-explain">Multiplicamos pelo fator p·q (ajuste de indexação).</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-math">E[X²] = E[X(X−1)] + E[X] = 2q/p² + 1/p = (2q + p)/p²</div>
+            <div class="step-explain">Isolamos E[X²] = E[X(X-1)] + E[X].</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = (2q+p)/p² − 1/p² = (2q+p−1)/p²</div>
+            <div class="step-explain">Subtraímos (E[X])² = 1/p².</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">2q + p − 1 = 2(1−p)+p−1 = 1−p = q  →  Var(X) = q/p² = (1−p)/p²</div>
+            <div class="step-explain">Substituindo q=1-p e simplificando. Quanto menor p, maior a variância — eventos raros geram grande incerteza no tempo de espera.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    props: `
+      <div class="prop-list">
+        <div class="prop-item"><strong>Ausência de memória (memoryless):</strong> <code>P(X > s+t | X > s) = P(X > t)</code>. Se você já falhou s vezes, a distribuição do número de tentativas restantes é idêntica à distribuição original. É a única distribuição discreta com essa propriedade (análoga à Exponencial no contínuo).</div>
+        <div class="prop-item"><strong>Cauda geométrica:</strong> P(X > k) = (1−p)^k. As probabilidades de cauda decaem exponencialmente, por isso o gráfico de barras tem aspecto de "decaimento geométrico".</div>
+        <div class="prop-item"><strong>Caso especial da Binomial Negativa:</strong> <code>Geométrica(p) = BinNeg(r=1, p)</code>. Quando você quer apenas o 1º sucesso.</div>
+        <div class="prop-item"><strong>Relação com a Exponencial:</strong> a Exponencial é o análogo contínuo. Para p pequeno, a Geométrica(p) escalada por p converge para uma Exponencial(1).</div>
+      </div>
+    `,
+
+    compare: `
+      <div class="compare-block">
+        <div class="compare-title">⚡ Geométrica vs. Binomial Negativa</div>
+        <div class="compare-body">A Geométrica é o caso r=1 da Binomial Negativa. Se você quer o 2º, 3º, ou r-ésimo sucesso, use a Binomial Negativa. A Geométrica responde "quando ocorre o <strong>primeiro</strong>?"</div>
+      </div>
+      <div class="info-block"><strong>Atenção à convenção:</strong> existe uma variante da Geométrica que conta o número de <strong>fracassos antes</strong> do 1º sucesso (suporte ≥ 0, com esperança q/p). A versão aqui conta o número de <strong>tentativas</strong> até o 1º sucesso (suporte ≥ 1, esperança 1/p). Confirme a convenção antes de usar tabelas ou software.</div>
+    `
+  },
+
+  // ── BINOMIAL NEGATIVA ──
+  {
+    id: 'negbin', num: '05',
+    name: 'Binomial Negativa', nameItalic: '',
+    tagline: 'Generalize a Geométrica: quantas tentativas até o r-ésimo sucesso?',
+    params: { p: 0.4, r: 3 },
+    paramsBadge: [['r', 'nº de sucessos alvo', '≥ 1'], ['p', 'probabilidade de sucesso', '0 < p < 1']],
+    color: '#9a7234',
+
+    story: `
+      <p>Você é um pesquisador clínico e precisa recrutar exatamente <strong>5 pacientes que respondam positivamente</strong> a um novo tratamento. Cada paciente tem probabilidade p de responder. Quantos pacientes você precisará avaliar ao total?</p>
+      <p>A <strong>Distribuição Binomial Negativa</strong> generaliza a Geométrica de forma natural: em vez de esperar o 1º sucesso, esperamos o <em>r-ésimo</em>. O nome "negativa" vem do fato de que sua FGM pode ser expressa via o coeficiente binomial generalizado com expoente negativo.</p>
+      <p>A FMP tem uma interpretação elegante: na k-ésima tentativa ocorre o r-ésimo sucesso. Isso significa que nas primeiras (k-1) tentativas houve exatamente (r-1) sucessos [C(k-1, r-1) arranjos], e a k-ésima tentativa foi necessariamente um sucesso.</p>
+      <p>Amplamente usada em epidemiologia (número de casos até r eventos), confiabilidade (falhas acumuladas) e modelos de contagem superdispersos.</p>
+    `,
+    examples: ['Pacientes avaliados até r respostas positivas', 'Itens inspecionados até r defeitos', 'Chamadas até r vendas fechadas', 'Modelagem de contagens superdispersas'],
+
+    formulas: `
+      <div class="formula-grid">
+        <div class="fbox highlight">
+          <div class="fbox-label">FMP — P(X = k)</div>
+          <div class="fbox-formula">P(X = k) = C(k−1, r−1) · pʳ · (1−p)^(k−r)</div>
+          <div class="fbox-note">k = r, r+1, r+2, … (total de tentativas até o r-ésimo sucesso)</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Interpretação de C(k−1, r−1)</div>
+          <div class="fbox-formula">Número de formas de distribuir (r−1) sucessos nas primeiras (k−1) tentativas.</div>
+          <div class="fbox-note">A k-ésima tentativa é sempre o r-ésimo sucesso.</div>
+        </div>
+      </div>
+      <div class="formula-grid">
+        <div class="fbox">
+          <div class="fbox-label">Esperança E[X]</div>
+          <div class="fbox-formula">r / p</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Variância Var(X)</div>
+          <div class="fbox-formula">r(1−p) / p²</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Relação com Geométrica</div>
+          <div class="fbox-formula">X = G₁ + G₂ + … + Gᵣ
+Gᵢ ~ Geom(p) i.i.d.</div>
+        </div>
+      </div>
+    `,
+
+    esperanca: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">X = G₁ + G₂ + … + Gᵣ</div>
+            <div class="step-explain"><strong>Decomposição fundamental:</strong> esperar pelo r-ésimo sucesso equivale a esperar pelo 1º sucesso (G₁), depois pelo 2º a partir daí (G₂), …, até o r-ésimo (Gᵣ). Cada Gᵢ ~ Geométrica(p), e são independentes entre si.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = E[G₁ + G₂ + … + Gᵣ]</div>
+            <div class="step-explain">Aplicamos a esperança à soma.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">= E[G₁] + E[G₂] + … + E[Gᵣ]</div>
+            <div class="step-explain"><strong>Linearidade da esperança</strong> (vale sempre, independente de independência).</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">= (1/p) + (1/p) + … + (1/p)  [r parcelas]</div>
+            <div class="step-explain">Cada Gᵢ ~ Geom(p), portanto E[Gᵢ] = 1/p.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = r/p</div>
+            <div class="step-explain">Exatamente r vezes a esperança da Geométrica. Com r=1, recuperamos 1/p. Intuitivo: precisamos de r sucessos, cada um custa em média 1/p tentativas.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    variancia: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">X = G₁ + G₂ + … + Gᵣ,  Gᵢ ~ Geom(p) independentes</div>
+            <div class="step-explain">Mesma decomposição usada na esperança, mas agora precisamos da independência explicitamente para somar variâncias.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = Var(G₁ + … + Gᵣ)</div>
+            <div class="step-explain">Variância da soma.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">= Var(G₁) + Var(G₂) + … + Var(Gᵣ)</div>
+            <div class="step-explain"><strong>Aditividade da variância para variáveis independentes:</strong> Var(A+B) = Var(A) + Var(B) sse A ⊥ B. Os r períodos de espera são independentes.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">= r · Var(G₁) = r · (1−p)/p²</div>
+            <div class="step-explain">Var(Geom(p)) = (1-p)/p². Somamos r parcelas iguais.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = r(1−p)/p²</div>
+            <div class="step-explain">Exatamente r vezes a variância da Geométrica. A dispersão cresce linearmente com r: acumular mais sucessos implica mais incerteza total.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    props: `
+      <div class="prop-list">
+        <div class="prop-item"><strong>Generaliza a Geométrica:</strong> <code>BinNeg(r=1, p) = Geométrica(p)</code>. Toda propriedade da Binomial Negativa com r=1 reduz à Geométrica.</div>
+        <div class="prop-item"><strong>Aditividade:</strong> Se X~BinNeg(r₁,p) e Y~BinNeg(r₂,p) independentes, então <code>X+Y ~ BinNeg(r₁+r₂, p)</code>.</div>
+        <div class="prop-item"><strong>Modelo de superdispersão:</strong> Na versão de contagem (número de fracassos), a Binomial Negativa tem Var > E, ao contrário da Poisson (Var = E). É amplamente usada em regressão de contagem quando os dados têm variância maior que a média (overdispersion).</div>
+        <div class="prop-item"><strong>Limite Poisson:</strong> Quando r→∞ e p→1 com r(1-p)→λ, a Binomial Negativa converge para Poisson(λ).</div>
+      </div>
+    `,
+
+    compare: `
+      <div class="compare-block">
+        <div class="compare-title">⚡ Binomial Negativa vs. Binomial</div>
+        <div class="compare-body"><strong>Binomial</strong>: n é fixo, X = nº de sucessos (variável). <strong>Binomial Negativa</strong>: r (nº de sucessos) é fixo, X = nº de tentativas (variável). São "inversas" uma da outra no sentido de o que é fixo e o que é variável.</div>
+      </div>
+      <div class="compare-block">
+        <div class="compare-title">⚡ Binomial Negativa vs. Geométrica</div>
+        <div class="compare-body">A Geométrica espera o <strong>1º</strong> sucesso. A Binomial Negativa espera o <strong>r-ésimo</strong>. Para r=1, são idênticas. A Binomial Negativa é a soma de r Geométricas independentes.</div>
+      </div>
+    `
+  },
+
+  // ── HIPERGEOMÉTRICA ──
+  {
+    id: 'hiper', num: '06',
+    name: 'Hipergeométrica', nameItalic: '',
+    tagline: 'Sorteio sem reposição: a Binomial para populações finitas.',
+    params: { N: 30, K: 12, n: 8 },
+    paramsBadge: [['N', 'tamanho da população', '≥ 1'], ['K', 'sucessos na pop.', '0 ≤ K ≤ N'], ['n', 'tamanho da amostra', '1 ≤ n ≤ N']],
+    color: '#a0503a',
+
+    story: `
+      <p>Uma urna contém N=30 bolas, sendo K=12 vermelhas e 18 azuis. Você retira n=8 bolas <strong>sem reposição</strong> (cada bola não volta à urna após ser retirada). Quantas bolas vermelhas há na amostra?</p>
+      <p>A <strong>Distribuição Hipergeométrica</strong> modela exatamente essa situação. O nome vem do fato de sua função geradora de probabilidades ser uma <em>função hipergeométrica</em> da teoria de séries especiais.</p>
+      <p>A diferença fundamental em relação à Binomial é que, sem reposição, as tentativas são <strong>dependentes</strong>: após retirar uma bola vermelha, a probabilidade de sucesso na próxima tentativa muda de K/N para (K-1)/(N-1). Isso introduz correlação negativa entre as extrações.</p>
+      <p>A FMP conta: das C(N,n) amostras possíveis, quantas têm exatamente k sucessos? A resposta é C(K,k)·C(N-K,n-k) — escolhemos k entre os K especiais e (n-k) entre os (N-K) não-especiais.</p>
+      <p>Aplicações: controle de qualidade de lotes finitos, estudos de caso-controle, análise de enriquecimento em bioinformática.</p>
+    `,
+    examples: ['Defeitos em lote finito (sem reposição)', 'Cartas de um naipe em mão de baralho', 'Espécies raras em amostragem ecológica', 'Genes enriquecidos em vias biológicas'],
+
+    formulas: `
+      <div class="formula-grid">
+        <div class="fbox highlight">
+          <div class="fbox-label">FMP — P(X = k)</div>
+          <div class="fbox-formula">P(X = k) = C(K,k) · C(N−K, n−k) / C(N,n)</div>
+          <div class="fbox-note">k = max(0, n−(N−K)), …, min(n, K)</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">FDA — F(k)</div>
+          <div class="fbox-formula">Σ_{j=min(0,…)}^{k} P(X=j)</div>
+          <div class="fbox-note">Sem forma fechada simples; soma-se a FMP.</div>
+        </div>
+      </div>
+      <div class="formula-grid">
+        <div class="fbox">
+          <div class="fbox-label">Esperança E[X]</div>
+          <div class="fbox-formula">nK/N = n · (K/N)</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Variância Var(X)</div>
+          <div class="fbox-formula">n · (K/N) · (1−K/N) · (N−n)/(N−1)</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">Fator de Correção</div>
+          <div class="fbox-formula">(N−n)/(N−1)</div>
+          <div class="fbox-note">Reduz a variância em relação à Binomial.</div>
+        </div>
+      </div>
+    `,
+
+    esperanca: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">X = I₁ + I₂ + … + Iₙ</div>
+            <div class="step-explain"><strong>Decomposição em indicadoras:</strong> Iⱼ = 1 se a j-ésima bola retirada é especial, 0 caso contrário. Esta decomposição não requer independência!</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = E[I₁] + E[I₂] + … + E[Iₙ]</div>
+            <div class="step-explain"><strong>Linearidade da esperança</strong> (válida mesmo sem independência — este é um ponto crucial!).</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">P(Iⱼ = 1) = K/N  para todo j</div>
+            <div class="step-explain">Por simetria, qualquer uma das N posições é igualmente provável de ser especial. Independente de j, a probabilidade marginal de sortear especial é K/N. (Confirma-se formalmente: em qualquer posição j, há K favoráveis de N equiprováveis.)</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">E[Iⱼ] = P(Iⱼ = 1) = K/N</div>
+            <div class="step-explain">Esperança da indicadora é a probabilidade do evento.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = n · (K/N) = nK/N</div>
+            <div class="step-explain">O mesmo que E[X] = np da Binomial com p = K/N! Esperança igual, variâncias diferentes. A correlação negativa entre extrações não afeta a esperança.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    variancia: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = Var(I₁ + … + Iₙ) = Σᵢ Var(Iᵢ) + 2Σ_{i&lt;j} Cov(Iᵢ, Iⱼ)</div>
+            <div class="step-explain"><strong>Fórmula da variância de uma soma:</strong> quando há dependência, os termos de covariância não são zero e precisam ser incluídos. Este é o ponto de diferença crucial com a Binomial!</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">Var(Iᵢ) = (K/N)(1 − K/N)</div>
+            <div class="step-explain">Cada Iᵢ ~ Bernoulli(K/N), portanto Var(Iᵢ) = p(1-p) com p = K/N.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">Cov(Iᵢ, Iⱼ) = E[IᵢIⱼ] − E[Iᵢ]E[Iⱼ]</div>
+            <div class="step-explain">Definição de covariância. Calculamos E[IᵢIⱼ] = P(Iᵢ=1 e Iⱼ=1).</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">P(Iᵢ=1 e Iⱼ=1) = K(K−1) / [N(N−1)]</div>
+            <div class="step-explain">Prob. de que a posição i E a posição j ambas sejam especiais: K/N · (K-1)/(N-1) — sem reposição, a segunda depende da primeira.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-math">Cov(Iᵢ,Iⱼ) = K(K−1)/[N(N−1)] − (K/N)² = −K(N−K)/[N²(N−1)]</div>
+            <div class="step-explain"><strong>Covariância negativa!</strong> Retirar uma bola especial reduz a chance da próxima ser especial — as extrações se "inibem" mutuamente.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = n·(K/N)(1−K/N) + n(n−1)·[−K(N−K)/(N²(N−1))]</div>
+            <div class="step-explain">Há n termos de variância e C(n,2) = n(n-1)/2 pares, mas cada par contribui 2·Cov = 2·(−...), resultando em n(n-1)·Cov no total.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = n·(K/N)·(1−K/N)·(N−n)/(N−1)</div>
+            <div class="step-explain">Após álgebra, emerge o <strong>fator de correção (N-n)/(N-1)</strong>. É sempre ≤ 1, tornando a variância da Hipergeométrica sempre menor ou igual à da Binomial correspondente. Quando n=N (amostragem total), a variância é zero — faz sentido: você retira tudo e sabe o resultado com certeza.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    props: `
+      <div class="prop-list">
+        <div class="prop-item"><strong>Fator de correção de população finita (FCPF):</strong> <code>(N−n)/(N−1)</code> reduz a variância em relação à Binomial. Quanto maior a fração amostral f = n/N, menor a variância.</div>
+        <div class="prop-item"><strong>Convergência para Binomial:</strong> Quando N→∞ com K/N = p fixo, a Hipergeométrica(N, K, n) → Binomial(n, p). Para N ≥ 20n, a aproximação é excelente.</div>
+        <div class="prop-item"><strong>Covariância negativa:</strong> Extrações sem reposição geram correlação negativa entre indicadoras. Isso é diferente da Binomial (independência), por isso variâncias diferem mesmo com mesma esperança.</div>
+        <div class="prop-item"><strong>Simetria:</strong> P(X=k; N,K,n) = P(X=k; N,n,K). O papel de K (especiais) e n (amostra) é intercambiável na FMP — elegante identidade combinatória.</div>
+      </div>
+    `,
+
+    compare: `
+      <div class="compare-block">
+        <div class="compare-title">⚡ Hipergeométrica vs. Binomial</div>
+        <div class="compare-body">
+          <strong>Mesma esperança</strong> (nK/N = np com p=K/N), <strong>variância menor</strong> na Hipergeométrica (fator FCPF ≤ 1).<br>
+          Binomial: tentativas independentes (com reposição).<br>
+          Hipergeométrica: tentativas dependentes (sem reposição, pop. finita).<br>
+          Critério prático: se n/N &lt; 0.05 (menos de 5% da pop.), use Binomial como aproximação.
+        </div>
+      </div>
+    `
+  },
+
+  // ── POISSON ──
+  {
+    id: 'poisson', num: '07',
+    name: 'Poisson', nameItalic: '',
+    tagline: 'Eventos raros em intervalo fixo — o limite da Binomial quando n→∞ e p→0.',
+    params: { lam: 4 },
+    paramsBadge: [['λ', 'taxa média de ocorrências', 'λ > 0']],
+    color: '#9a4870',
+
+    story: `
+      <p><strong>Siméon-Denis Poisson</strong> (1781–1840), matemático e físico francês, publicou em 1837 o livro <em>"Recherches sur la probabilité des jugements"</em>. Ali aparecia, quase como um resultado secundário, a distribuição que hoje leva seu nome.</p>
+      <p>O contexto original era macabro: Poisson estava interessado em erros judiciais — a probabilidade de um tribunal condenar um inocente. Mas a distribuição ganhou fama maior em outro contexto: <strong>o problema das mortes por coice de cavalo no exército prussiano</strong>, analisado por Ladislaus Bortkiewicz em 1898. Ele contou mortes em 14 corpos do exército por 20 anos e mostrou que se ajustavam perfeitamente a uma Poisson — um dos primeiros usos exitosos do modelo.</p>
+      <p>A Poisson é o <strong>limite da Binomial</strong> quando n→∞ e p→0 com np=λ fixo: muitas tentativas, cada uma com chance minúscula, mas com uma taxa média λ constante. É a distribuição dos <em>eventos raros</em>.</p>
+      <p>A beleza da Poisson está em seu único parâmetro λ, que ao mesmo tempo é média e variância. Se nos dados observados Var ≫ E[X], o processo não é Poisson — há <em>superdispersão</em>.</p>
+    `,
+    examples: ['E-mails recebidos por hora', 'Acidentes numa rodovia por mês', 'Mutações por gene por geração', 'Chegada de clientes numa fila', 'Contagem de fótons num detector'],
+
+    formulas: `
+      <div class="formula-grid">
+        <div class="fbox highlight">
+          <div class="fbox-label">FMP — P(X = k)</div>
+          <div class="fbox-formula">P(X = k) = e^(−λ) · λᵏ / k!</div>
+          <div class="fbox-note">k = 0, 1, 2, … (sem limite superior)</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">FDA — F(k) = P(X ≤ k)</div>
+          <div class="fbox-formula">F(k) = e^(−λ) · Σ_{j=0}^{k} λʲ/j!</div>
+          <div class="fbox-note">Função Gama incompleta regularizada.</div>
+        </div>
+      </div>
+      <div class="formula-grid">
+        <div class="fbox">
+          <div class="fbox-label">Esperança E[X]</div>
+          <div class="fbox-formula">λ</div>
+        </div>
+        <div class="fbox highlight">
+          <div class="fbox-label">Variância Var(X)</div>
+          <div class="fbox-formula">λ  ← igual à esperança!</div>
+          <div class="fbox-note">Propriedade única desta distribuição.</div>
+        </div>
+        <div class="fbox">
+          <div class="fbox-label">FGM M(t)</div>
+          <div class="fbox-formula">exp(λ(eᵗ − 1))</div>
+        </div>
+      </div>
+    `,
+
+    esperanca: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = Σ_{k=0}^{∞} k · e^(−λ) · λᵏ / k!</div>
+            <div class="step-explain">Definição. O termo k=0 contribui zero. Separamos e^(−λ) pois é constante.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">= e^(−λ) · Σ_{k=1}^{∞} k · λᵏ / k!</div>
+            <div class="step-explain">Retiramos e^(−λ) da soma. A soma inicia em k=1.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">k / k! = 1 / (k−1)!</div>
+            <div class="step-explain">Simplificação algébrica: k/k! = k/(k·(k-1)!) = 1/(k-1)!.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">= e^(−λ) · λ · Σ_{k=1}^{∞} λᵏ⁻¹ / (k−1)!</div>
+            <div class="step-explain">Fatoramos λ. Fazemos a substituição j = k−1.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-math">= e^(−λ) · λ · Σ_{j=0}^{∞} λʲ / j!</div>
+            <div class="step-explain">A soma Σ λʲ/j! é a <strong>série de Taylor de e^λ</strong>: Σ_{j=0}^∞ λʲ/j! = e^λ.</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">E[X] = e^(−λ) · λ · e^λ = λ</div>
+            <div class="step-explain">e^(−λ) · e^λ = e^0 = 1. Elegante: a esperança é simplesmente λ, o único parâmetro do modelo.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    variancia: `
+      <div class="deriv">
+        <div class="deriv-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = E[X²] − (E[X])² = E[X²] − λ²</div>
+            <div class="step-explain">König-Huygens. Calculamos E[X²] via E[X(X-1)] + E[X].</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-math">E[X(X−1)] = Σ_{k=2}^{∞} k(k−1) · e^(−λ) · λᵏ / k!</div>
+            <div class="step-explain">Calculamos o segundo momento fatorial. Os termos k=0 e k=1 são zero.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-math">k(k−1)/k! = 1/(k−2)!</div>
+            <div class="step-explain">k(k-1)/(k(k-1)(k-2)!) = 1/(k-2)!. Simplificação análoga à usada na esperança.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-math">= e^(−λ) · λ² · Σ_{k=2}^{∞} λᵏ⁻² / (k−2)! = e^(−λ) · λ² · eˡᵃᵐ</div>
+            <div class="step-explain">Fatoramos λ². Substituição j=k-2: a soma vira Σ λʲ/j! = e^λ novamente.</div>
+          </div>
+        </div>
+        <div class="deriv-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-math">E[X(X−1)] = λ²  →  E[X²] = λ² + E[X] = λ² + λ</div>
+            <div class="step-explain">e^(−λ)·e^λ = 1. Isolamos E[X²] = E[X(X-1)] + E[X].</div>
+          </div>
+        </div>
+        <div class="deriv-step result-step">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <div class="step-math">Var(X) = (λ² + λ) − λ² = λ</div>
+            <div class="step-explain"><strong>E[X] = Var(X) = λ.</strong> Propriedade única da Poisson. Na prática: se num conjunto de dados a variância da contagem é muito maior que a média, o processo não é Poisson (superdispersão) e modelos alternativos (Binomial Negativa) devem ser considerados.</div>
+          </div>
+        </div>
+      </div>
+    `,
+
+    props: `
+      <div class="prop-list">
+        <div class="prop-item"><strong>E[X] = Var(X) = λ:</strong> a igualdade entre média e variância é a assinatura da Poisson. Um teste empírico: se Var/E[X] ≈ 1, o processo é possivelmente Poisson; se Var/E[X] ≫ 1, há superdispersão.</div>
+        <div class="prop-item"><strong>Aditividade:</strong> Se X~Poisson(λ₁) e Y~Poisson(λ₂) independentes, então <code>X+Y ~ Poisson(λ₁+λ₂)</code>. Eventos de duas fontes independentes combinam-se naturalmente.</div>
+        <div class="prop-item"><strong>Decomposição:</strong> Se X~Poisson(λ) e cada evento é classificado de forma independente como tipo A (prob. p) ou B (prob. 1-p), então Xₐ~Poisson(λp) e X_b~Poisson(λ(1-p)) e são independentes.</div>
+        <div class="prop-item"><strong>Limite da Binomial:</strong> Bin(n, p) → Poisson(λ=np) quando n→∞, p→0, np→λ. Regra prática: n ≥ 30 e p ≤ 0.05.</div>
+        <div class="prop-item"><strong>Convergência para Normal:</strong> Para λ grande, Poisson(λ) ≈ Normal(λ, λ) pelo TLC. Regra prática: λ ≥ 30.</div>
+      </div>
+    `,
+
+    compare: `
+      <div class="compare-block">
+        <div class="compare-title">⚡ Poisson vs. Binomial</div>
+        <div class="compare-body"><strong>Binomial</strong>: n fixo e conhecido, p conhecido, suporte finito {0,…,n}. <strong>Poisson</strong>: n desconhecido ou "infinito", apenas λ=np é conhecido, suporte {0,1,2,…}. Use Poisson quando o número de "tentativas possíveis" é muito grande e a probabilidade de cada uma é pequena.</div>
+      </div>
+      <div class="compare-block">
+        <div class="compare-title">⚡ Poisson vs. Binomial Negativa (superdispersão)</div>
+        <div class="compare-body">A <strong>Poisson</strong> assume Var = E. A <strong>Binomial Negativa</strong> tem Var > E (superdispersão). Se ao ajustar um modelo de contagem a variância dos resíduos for muito maior que a média, a Binomial Negativa é mais adequada. Este é um diagnóstico fundamental em regressão de dados de contagem.</div>
+      </div>
+      <div class="success-block"><strong>Resumo dos limites:</strong> Bin(n,p) → Poisson(λ) quando n→∞, p→0, np=λ. Bin(n,p) → Normal(np, npq) quando n→∞ pelo TLC. BinNeg(r,p) → Poisson(λ) quando r→∞, p→1, r(1-p)→λ.</div>
+    `
+  }
+];
+
+// ══════════════════════════════════════════════
+// STATE & CHARTS
+// ══════════════════════════════════════════════
+let currentDist = 'uniforme';
+let currentTab = 'historia';
+const charts = {};
+
+const TABS = [
+  { id: 'historia', label: '01 · história' },
+  { id: 'formulas', label: '02 · fórmulas' },
+  { id: 'esperanca', label: '03 · esperança' },
+  { id: 'variancia', label: '04 · variância' },
+  { id: 'props', label: '05 · propriedades' },
+  { id: 'compare', label: '06 · comparações' },
+];
+
+// ══════════════════════════════════════════════
+// CHART RENDERER
+// ══════════════════════════════════════════════
+function renderChart(dist) {
+  const p = dist.params;
+  const { id, color } = dist;
+  const lam = p.lam || 4;
+  const n = p.n || 10;
+  const r = p.r || 3;
+  const N = p.N || 30;
+  const K = p.K || 12;
+  const prob = p.p || 0.4;
+
+  const range = getRange(id, prob, n, r, N, K, lam);
+  const data = range.map(k => pmf(id, prob, n, r, N, K, lam, k));
+  const cid = 'chart-' + id;
+  const canvas = document.getElementById(cid);
+  if (!canvas) return;
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+
+  let E, V;
+  if (id === 'uniforme') { E = (n + 1) / 2; V = (n * n - 1) / 12; }
+  else if (id === 'bernoulli') { E = prob; V = prob * (1 - prob); }
+  else if (id === 'binomial') { E = n * prob; V = n * prob * (1 - prob); }
+  else if (id === 'geometrica') { E = 1 / prob; V = (1 - prob) / (prob * prob); }
+  else if (id === 'negbin') { E = r / prob; V = r * (1 - prob) / (prob * prob); }
+  else if (id === 'hiper') { E = n * K / N; V = n * (K / N) * ((N - K) / N) * ((N - n) / (N - 1)); }
+  else if (id === 'poisson') { E = lam; V = lam; }
+
+  const el = document.getElementById('stat-e-' + id);
+  const vl = document.getElementById('stat-v-' + id);
+  if (el) el.textContent = E.toFixed(3);
+  if (vl) vl.textContent = V.toFixed(3);
+
+  charts[id] = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: range.map(String),
+      datasets: [{
+        data,
+        backgroundColor: color + 'bb',
+        borderColor: color,
+        borderWidth: 1,
+        borderRadius: 3,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1e1c17',
+          borderColor: '#3a3830',
+          borderWidth: 1,
+          titleColor: '#c9a84c',
+          bodyColor: '#9d9882',
+          callbacks: {
+            title: ctx => 'k = ' + range[ctx[0].dataIndex],
+            label: ctx => ' P(X = k) = ' + ctx.raw.toFixed(5)
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: '#6b6654', font: { size: 11, family: "'JetBrains Mono'" }, maxRotation: 0 },
+          border: { color: '#2a2820' }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6b6654', font: { size: 11, family: "'JetBrains Mono'" } },
+          border: { color: '#2a2820' },
+          min: 0
+        }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+// CONTROLS BUILDER
+// ══════════════════════════════════════════════
+function buildControls(dist) {
+  const { id } = dist;
+  if (id === 'uniforme') return `
+    <div class="chart-controls">
+      <div class="ctrl">
+        <div class="ctrl-label">n — número de resultados <b id="u-n-v">${dist.params.n}</b></div>
+        <input type="range" min="2" max="20" value="${dist.params.n}" oninput="dist_update('uniforme','n',+this.value,'u-n-v')">
+      </div>
+    </div>`;
+  if (id === 'bernoulli') return `
+    <div class="chart-controls">
+      <div class="ctrl">
+        <div class="ctrl-label">p — probabilidade de sucesso <b id="be-p-v">${dist.params.p}</b></div>
+        <input type="range" min="0.01" max="0.99" step="0.01" value="${dist.params.p}" oninput="dist_update('bernoulli','p',+this.value,'be-p-v')">
+      </div>
+    </div>`;
+  if (id === 'binomial') return `
+    <div class="chart-controls">
+      <div class="ctrl">
+        <div class="ctrl-label">n — tentativas <b id="bi-n-v">${dist.params.n}</b></div>
+        <input type="range" min="1" max="40" value="${dist.params.n}" oninput="dist_update('binomial','n',+this.value,'bi-n-v')">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-label">p — prob. de sucesso <b id="bi-p-v">${dist.params.p}</b></div>
+        <input type="range" min="0.01" max="0.99" step="0.01" value="${dist.params.p}" oninput="dist_update('binomial','p',+this.value,'bi-p-v')">
+      </div>
+    </div>`;
+  if (id === 'geometrica') return `
+    <div class="chart-controls">
+      <div class="ctrl">
+        <div class="ctrl-label">p — prob. de sucesso <b id="ge-p-v">${dist.params.p}</b></div>
+        <input type="range" min="0.05" max="0.99" step="0.01" value="${dist.params.p}" oninput="dist_update('geometrica','p',+this.value,'ge-p-v')">
+      </div>
+    </div>`;
+  if (id === 'negbin') return `
+    <div class="chart-controls">
+      <div class="ctrl">
+        <div class="ctrl-label">r — nº de sucessos alvo <b id="nb-r-v">${dist.params.r}</b></div>
+        <input type="range" min="1" max="15" value="${dist.params.r}" oninput="dist_update('negbin','r',+this.value,'nb-r-v')">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-label">p — prob. de sucesso <b id="nb-p-v">${dist.params.p}</b></div>
+        <input type="range" min="0.05" max="0.95" step="0.01" value="${dist.params.p}" oninput="dist_update('negbin','p',+this.value,'nb-p-v')">
+      </div>
+    </div>`;
+  if (id === 'hiper') return `
+    <div class="chart-controls">
+      <div class="ctrl">
+        <div class="ctrl-label">N — população <b id="hi-N-v">${dist.params.N}</b></div>
+        <input type="range" min="10" max="60" value="${dist.params.N}" oninput="dist_update('hiper','N',+this.value,'hi-N-v')">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-label">K — especiais na pop. <b id="hi-K-v">${dist.params.K}</b></div>
+        <input type="range" min="1" max="${dist.params.N-1}" value="${dist.params.K}" oninput="dist_update('hiper','K',+this.value,'hi-K-v')">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-label">n — amostra <b id="hi-n-v">${dist.params.n}</b></div>
+        <input type="range" min="1" max="${Math.floor(dist.params.N/2)}" value="${dist.params.n}" oninput="dist_update('hiper','n',+this.value,'hi-n-v')">
+      </div>
+    </div>`;
+  if (id === 'poisson') return `
+    <div class="chart-controls">
+      <div class="ctrl">
+        <div class="ctrl-label">λ — taxa média <b id="po-l-v">${dist.params.lam}</b></div>
+        <input type="range" min="0.5" max="20" step="0.5" value="${dist.params.lam}" oninput="dist_update('poisson','lam',+this.value,'po-l-v')">
+      </div>
+    </div>`;
+  return '';
+}
+
+window.dist_update = function(id, key, val, labelId) {
+  const dist = DISTS.find(d => d.id === id);
+  dist.params[key] = val;
+  const label = document.getElementById(labelId);
+  if (label) label.textContent = val;
+  setTimeout(() => renderChart(dist), 10);
+};
+
+// ══════════════════════════════════════════════
+// RENDER ENGINE
+// ══════════════════════════════════════════════
+function buildTabContent(dist, tabId) {
+  if (tabId === 'historia') {
+    return `
+      <div class="section">
+        <div class="section-label">História e motivação</div>
+        <div class="story-card">${dist.story}</div>
+        <div class="example-chips">${dist.examples.map(e => `<span class="chip">${e}</span>`).join('')}</div>
+      </div>
+    `;
+  }
+  if (tabId === 'formulas') {
+    return `
+      <div class="section">
+        <div class="section-label">FMP e FDA</div>
+        ${dist.formulas}
+      </div>
+      <div class="section">
+        <div class="section-label">Gráfico da FMP</div>
+        <div class="chart-wrap">
+          ${buildControls(dist)}
+          <div style="position:relative;height:220px;">
+            <canvas id="chart-${dist.id}" role="img" aria-label="Gráfico FMP ${dist.name}"></canvas>
+          </div>
+          <div class="chart-stats">
+            <span class="cstat">E[X] = <b id="stat-e-${dist.id}">—</b></span>
+            <span class="cstat">Var(X) = <b id="stat-v-${dist.id}">—</b></span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  if (tabId === 'esperanca') {
+    return `
+      <div class="section">
+        <div class="section-label">Derivação passo a passo — E[X]</div>
+        ${dist.esperanca}
+      </div>
+    `;
+  }
+  if (tabId === 'variancia') {
+    return `
+      <div class="section">
+        <div class="section-label">Derivação passo a passo — Var(X)</div>
+        ${dist.variancia}
+      </div>
+    `;
+  }
+  if (tabId === 'props') {
+    return `
+      <div class="section">
+        <div class="section-label">Propriedades relevantes</div>
+        ${dist.props}
+      </div>
+    `;
+  }
+  if (tabId === 'compare') {
+    return `
+      <div class="section">
+        <div class="section-label">Comparações e confusões comuns</div>
+        ${dist.compare}
+      </div>
+    `;
+  }
+  return '';
+}
+
+function renderDist(distId, tabId) {
+  const dist = DISTS.find(d => d.id === distId);
+  currentDist = distId;
+  currentTab = tabId;
+
+  // Update sidebar
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.dist === distId);
+  });
+
+  // Update tabs
+  document.querySelectorAll('.tab-btn').forEach(el => {
+    el.classList.toggle('active', el.dataset.tab === tabId);
+  });
+
+  // Render header + content
+  const pb = dist.paramsBadge.map(([k, d, c]) =>
+    `<div class="pb-param">${k} <span>— ${d}</span></div>`
+  ).join('');
+
+  const content = document.getElementById('mainContent');
+  content.innerHTML = `
+    <div class="dist-hero">
+      <div class="dist-hero-top">
+        <div>
+          <span class="dist-tag">${dist.num} / 07</span>
+          <div class="dist-name">${dist.nameItalic ? `${dist.name} <em>${dist.nameItalic}</em>` : dist.name}</div>
+          <div class="dist-tagline">${dist.tagline}</div>
+        </div>
+        <div class="dist-params-badge">
+          <div class="pb-title">Parâmetros</div>
+          ${pb}
+        </div>
+      </div>
+    </div>
+    ${buildTabContent(dist, tabId)}
+  `;
+
+  if (tabId === 'formulas') {
+    setTimeout(() => renderChart(dist), 80);
+  }
+}
+
+// ══════════════════════════════════════════════
+// BUILD NAV & TABS
+// ══════════════════════════════════════════════
+const sideNav = document.getElementById('sideNav');
+DISTS.forEach(d => {
+  const item = document.createElement('div');
+  item.className = 'nav-item' + (d.id === currentDist ? ' active' : '');
+  item.dataset.dist = d.id;
+  item.innerHTML = `<span class="nav-num">${d.num}</span>${d.name}`;
+  item.onclick = () => renderDist(d.id, currentTab);
+  sideNav.appendChild(item);
+});
+
+const topbar = document.getElementById('topbar');
+TABS.forEach(t => {
+  const btn = document.createElement('div');
+  btn.className = 'tab-btn' + (t.id === currentTab ? ' active' : '');
+  btn.dataset.tab = t.id;
+  btn.textContent = t.label;
+  btn.onclick = () => renderDist(currentDist, t.id);
+  topbar.appendChild(btn);
+});
+
+// Initial render
+renderDist('uniforme', 'historia');
+</script>
+</body>
+</html>

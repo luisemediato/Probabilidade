@@ -1,0 +1,1 @@
+Contém um intervalo (tanto finito quanto infinito) de números reais.

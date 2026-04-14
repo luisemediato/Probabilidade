@@ -1,0 +1,1 @@
+É a medida de incerteza de algo ocorrer ou não.

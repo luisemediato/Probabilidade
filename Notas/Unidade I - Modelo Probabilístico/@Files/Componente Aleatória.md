@@ -1,0 +1,1 @@
+É o elemento de incerteza ou variabilidade inerente a um processo, que impede a previsão exata do resultado individual, mesmo que as condições iniciais do experimento sejam mantidas constantes

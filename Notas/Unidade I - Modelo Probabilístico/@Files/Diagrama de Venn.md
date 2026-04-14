@@ -1,0 +1,1 @@
+É uma representação gráfica que utiliza círculos ou formas fechadas sobrepostas para mostrar as relações lógicas, semelhanças e diferenças entre conjuntos de elementos
