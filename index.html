@@ -7,39 +7,87 @@
   <meta name="description" content="Repositório de estudos de Probabilidade - UFMG">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   
+  <!-- Tema Docsify Vue -->
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  
+  <!-- KaTeX para renderização de matemática -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  
+  <style>
+    :root {
+      --primary-color: #1e90ff;
+      --text-color: #333;
+    }
+  </style>
 </head>
 <body>
   <div id="app">Carregando material de Probabilidade...</div>
   
   <script>
     window.$docsify = {
-      name: 'Probabilidade',
-      repo: 'luisemediato/Probabilidade', // Substitua pelo seu link real se mudar o nome
+      // Informações Básicas
+      name: 'Probabilidade - UFMG',
+      repo: 'https://github.com/luisemediato/Probabilidade',
+      homepage: 'README.md',
       
-      // Configurações de Navegação
+      // Configurações de Navegação e Barra Lateral
       loadSidebar: true,
+      loadNavbar: false,
       subMaxLevel: 3,
-      homepage: 'Notas/Geral.md', // Arquivo que abre por padrão
+      auto2top: true,
+      
+      // Configuração da página
+      maxLevel: 4,
+      mergeNavbar: true,
+      
+      // Busca
+      search: {
+        maxAge: 86400000,
+        paths: 'auto',
+        placeholder: 'Buscar...',
+        noData: 'Nenhum resultado encontrado',
+        depth: 3
+      },
+      
+      // Markdown customizado
+      markdown: {
+        gfm: true,
+        tables: true,
+        breaks: true,
+        pedantic: true,
+        sanitize: false,
+        smartLists: true,
+        smartypants: true
+      },
       
       // Configurações de exibição
-      auto2top: true, // Rola para o topo ao mudar de página
+      basePath: '/',
+      pathNamespace: '/Probabilidade/',
       
-      // Configuração para fórmulas matemáticas (KaTeX)
-      latex: {
-        inline  : '$$', // Formato de fórmulas na linha
-        display : '$$', // Formato de fórmulas em bloco
-      }
+      // Plugins e integrações
+      plugins: [
+        function(hook, vm) {
+          hook.beforeEach(function(html) {
+            return html;
+          });
+        }
+      ]
     }
   </script>
 
-  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <!-- Docsify Core -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
   
-  <script src="//cdn.jsdelivr.net/npm/docsify-latex@0"></script>
+  <!-- KaTeX (matemática) -->
+  <script src="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/marked@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
   
+  <!-- Plugins -->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
-  
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
 
 </body>
 </html>
