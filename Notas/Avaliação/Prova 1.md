@@ -1,7 +1,12 @@
-Data: 08/04/2026
-Valor: 30 pontos
-Nota: 
+# Prova 1
 
-Conteúdo:
+**Data:** 13/04/2026  
+**Pontos:** 30  
 
-Tudo até modelos discretos
+
+## Conteúdo
+
+Tudo até Modelos Discretos.
+
+
+## Anotações

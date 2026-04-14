@@ -1,53 +1,59 @@
-EST241 - TTN - Probabilidade - 60h - 4 créditos
+# 📚 Probabilidade (EST241)
 
-Aulas no CAD3 sala 410 
-Docente: Denise Duarte
-Contatos: denised@ufmg.br 
-Sala: Icex sala 4074
-Programa: https://virtual.ufmg.br/20261/pluginfile.php/310862/mod_resource/content/1/programa%20EST241.pdf
+**Carga Horária:** 60h | **Créditos:** 4 | **Turma:** TTN
 
----
-### 1) Ementa:
+Repositório de notas, resumos e conteúdo sobre Probabilidade — sincronizado entre **Obsidian** (local) e **GitHub Pages** (online).
 
-### 2) Distribuição de pontos:
-- [Prova 1](Avaliação/Prova%201.md)
-- [Prova 2](Avaliação/Prova%202.md)
-- [Prova 3](Avaliação/Prova%203.md)
-### 3) **Livro Texto:** 
-**Probabilidade: Um Curso Moderno com Aplicações (Português) , Sheldom Ross, 8ª edição**
+## Informações da Disciplina
 
-### Progresso
-- [ ] Unidade I
-- [ ] Unidade II
-- [ ] Unidade III
-- [ ] Unidade IV
-- [ ] Unidade V
-- [ ] Unidade VI
+| Informação | Detalhe |
+|-----------|---------|
+| **Docente** | Denise Duarte |
+| **Email** | denised@ufmg.br |
+| **Sala** | ICEX sala 4074 |
+| **Aulas** | CAD3 sala 410 |
+
+## Ementa
 
 
 
-| Coluna Esquerda                       | Coluna Direita                    |
-| :------------------------------------ | :-------------------------------- |
-| Texto que fica na primeira coluna.    | Texto que fica na segunda coluna. |
-| Você pode adicionar mais linhas aqui. | Mais conteúdo aqui.               |
-|                                       |                                   |
+## Conteúdo
 
+O material está organizado em **6 unidades temáticas**:
 
-<div style="display: flex; gap: 20px;">
-  <div style="flex: 1;">
-    <h3>Coluna 1</h3>
-    <p>Conteúdo da primeira coluna.</p>
-  </div>
-  <div style="flex: 1;">
-    <h3>Coluna 2</h3>
-    <p>Conteúdo da segunda coluna.</p>
-  </div>
-</div>
+- [Unidade I: Modelo Probabilístico](Unidade%20I%20-%20Modelo%20Probabilístico/Descrição.md)
+- [Unidade II: Variáveis Aleatórias](Unidade%20II%20-%20Variáveis%20e%20Vetores%20Aleatórios/Descrição.md)
+- [Unidade III: Esperança Matemática](Unidade%20III%20-%20Esperança%20Matemática/Descrição.md)
+- [Unidade IV: Distribuição e Esperança Condicional](Unidade%20IV%20-%20Distribuição%20e%20Esperança%20Condicional/Descrição.md)
+- [Unidade V: Funções Características](Unidade%20V%20-%20Funções%20Características/Descrição.md)
+- [Unidade VI: Convergência](Unidade%20VI%20-%20Convergência/Descrição.md)
 
+## Avaliação
 
-> [!question]
-> > [!success] Título 1
-> > Texto da coluna 1
->
-> > [!info] Título 2
-> > Texto da coluna 2
+Distribuição de pontos ao longo da disciplina:
+
+| Prova | Pontos |
+|-------|--------|
+| [Prova 1](Avaliação/Prova%201.md) | 30 |
+| [Prova 2](Avaliação/Prova%202.md) | 35 |
+| [Prova 3](Avaliação/Prova%203.md) | 35 | 
+| **Total** | **100** |
+
+## Referência
+
+**Probabilidade: Um Curso Moderno com Aplicações** — Sheldon Ross, 8ª edição
+
+## Navegação
+
+- [📅 Aulas](Aulas/README.md)
+- [📝 Avaliações](Avaliação/README.md)
+- [💡 Resumos](../Resumos/)
+
+## Progresso
+
+- [ ] Unidade I: Modelo Probabilístico
+- [ ] Unidade II: Variáveis Aleatórias
+- [ ] Unidade III: Esperança Matemática
+- [ ] Unidade IV: Distribuição e Esperança Condicional
+- [ ] Unidade V: Funções Características
+- [ ] Unidade VI: Convergência

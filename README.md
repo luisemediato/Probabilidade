@@ -1,56 +1,25 @@
 # Probabilidade - UFMG 2026.1
 
-Bem-vindo ao repositório de estudos de **Probabilidade** da disciplina EST241 da UFMG!
+Repositório de estudos de **Probabilidade** (EST241, 60h, 4 créditos).
 
-## 📚 Sobre este Material
+Sincronizado entre **Obsidian** (acesso local) e **GitHub Pages** com **Docsify** (consulta online).
 
-Este é um repositório de notas, resumos e conteúdo sobre Probabilidade, organizados de forma a funcionar tanto em **Obsidian** (para edição local) quanto em **GitHub Pages** com **Docsify** (para consulta online).
+## 🔗 Links
 
-## 🎯 Objetivos
+- **[📚 Informações da Disciplina](Notas/Descrição.md)** — Docente, contatos, avaliação, referências
+- **[📅 Aulas](Notas/Aulas/)** — Notas de aula
+- **[📝 Avaliações](Notas/Avaliação/)** — Provas e exercícios
+- **[💡 Resumos](Resumos/)** — Materiais suplementares
 
-- Compilar notas de aula estruturadas
-- Documentar conceitos fundamentais de probabilidade
-- Facilitar a revisão e consulta futura
+## 📖 Unidades
 
-## 📖 Conteúdo
-
-Este material está organizado em 6 unidades:
-
-1. **Unidade I**: Modelo Probabilístico
-2. **Unidade II**: Variáveis Aleatórias
-3. **Unidade III**: Esperança Matemática
-4. **Unidade IV**: Distribuição e Esperança Condicional
-5. **Unidade V**: Funções Características
-6. **Unidade VI**: Convergência
-
-## 🔗 Links Úteis
-
-- 📅 [Cronograma de Aulas](Notas/Aulas/)
-- 📝 [Avaliações](Notas/Avaliação/)
-- 💡 [Resumos](Resumos/)
-
-## 👨‍🎓 Informações da Disciplina
-
-- **Docente**: Denise Duarte
-- **Email**: denised@ufmg.br
-- **Sala**: ICEX sala 4074
-- **Carga Horária**: 60h (4 créditos)
-- **Turma**: TTN
-
-## 📖 Referência Principal
-
-**Probabilidade: Um Curso Moderno com Aplicações (Português)** - Sheldon Ross, 8ª edição
-
-## 💻 Como Usar
-
-### Localmente (Obsidian)
-1. Clone o repositório
-2. Abra a pasta `Notas` no Obsidian
-3. Utilize os links interativos para navegar
-
-### Online (GitHub Pages)
-Visite: https://luisemediato.github.io/Probabilidade/
+1. [Modelo Probabilístico](Notas/Unidade%20I%20-%20Modelo%20Probabilístico/Descrição.md)
+2. [Variáveis Aleatórias](Notas/Unidade%20II%20-%20Variáveis%20e%20Vetores%20Aleatórios/Descrição.md)
+3. [Esperança Matemática](Notas/Unidade%20III%20-%20Esperança%20Matemática/Descrição.md)
+4. [Distribuição e Esperança Condicional](Notas/Unidade%20IV%20-%20Distribuição%20e%20Esperança%20Condicional/Descrição.md)
+5. [Funções Características](Notas/Unidade%20V%20-%20Funções%20Características/Descrição.md)
+6. [Convergência](Notas/Unidade%20VI%20-%20Convergência/Descrição.md)
 
 ---
 
-**Última atualização**: Abril de 2026
+**Online:** https://luisemediato.github.io/Probabilidade/
